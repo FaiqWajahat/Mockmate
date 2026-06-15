@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MockMate — Full Project Report</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --accent: #8b5cf6;
+            --green: #10b981;
+            --blue: #3b82f6;
+            --orange: #f59e0b;
+            --red: #ef4444;
+            --bg: #0a0a0f;
+            --surface: #111118;
+            --card: #16161f;
+            --border: #1e1e2e;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                color: #111;
+                font-size: 12px;
+            }
+
+            .cover {
+                background: linear-gradient(135deg, #4338ca, #7c3aed) !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .badge,
+            .tag,
+            .chip {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            section {
+                page-break-inside: avoid;
+            }
+
+            .page-break {
+                page-break-before: always;
+            }
+        }
+
+        /* ---- Cover ---- */
+        .cover {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4c1d95 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 60px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cover::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 20%, rgba(99, 102, 241, .3) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(139, 92, 246, .2) 0%, transparent 60%);
+        }
+
+        .cover-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 255, 255, .2);
+            color: #c4b5fd;
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .cover h1 {
+            font-size: clamp(48px, 8vw, 80px);
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+
+        .cover h1 span {
+            color: #a78bfa;
+        }
+
+        .cover-sub {
+            font-size: 20px;
+            color: #c4b5fd;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .cover-meta {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .cover-meta-item {
+            background: rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 12px;
+            padding: 16px 24px;
+            color: #e2e8f0;
+        }
+
+        .cover-meta-item .label {
+            font-size: 11px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .cover-meta-item .value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .cover-url {
+            margin-top: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: #a5b4fc;
+            background: rgba(99, 102, 241, .15);
+            border: 1px solid rgba(99, 102, 241, .3);
+            padding: 8px 20px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        /* ---- Layout ---- */
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        section {
+            margin-bottom: 60px;
+        }
+
+        h2 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #fff;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 .icon {
+            font-size: 22px;
+        }
+
+        h3 {
+            font-size: 17px;
+            font-weight: 600;
+            color: #c4b5fd;
+            margin: 24px 0 12px;
+        }
+
+        p {
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+
+        strong {
+            color: #e2e8f0;
+        }
+
+        /* ---- Cards ---- */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .feature-card h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 13px;
+            color: #64748b;
+            margin: 0;
+        }
+
+        /* ---- Tech Badges ---- */
+        .tech-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge.purple {
+            background: rgba(99, 102, 241, .15);
+            color: #a5b4fc;
+            border: 1px solid rgba(99, 102, 241, .3);
+        }
+
+        .badge.green {
+            background: rgba(16, 185, 129, .12);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, .25);
+        }
+
+        .badge.blue {
+            background: rgba(59, 130, 246, .12);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, .25);
+        }
+
+        .badge.orange {
+            background: rgba(245, 158, 11, .12);
+            color: #fcd34d;
+            border: 1px solid rgba(245, 158, 11, .25);
+        }
+
+        .badge.red {
+            background: rgba(239, 68, 68, .12);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, .25);
+        }
+
+        .badge.gray {
+            background: rgba(100, 116, 139, .12);
+            color: #94a3b8;
+            border: 1px solid rgba(100, 116, 139, .25);
+        }
+
+        /* ---- Table ---- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        th {
+            background: rgba(99, 102, 241, .15);
+            color: #a5b4fc;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            color: #94a3b8;
+            font-size: 13px;
+            vertical-align: top;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        td strong {
+            color: #e2e8f0;
+        }
+
+        td code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            background: rgba(99, 102, 241, .1);
+            color: #a5b4fc;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* ---- Route tags ---- */
+        .route {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            background: rgba(16, 185, 129, .1);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, .2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .method {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+            margin-right: 6px;
+        }
+
+        .method.get {
+            background: rgba(16, 185, 129, .2);
+            color: #6ee7b7;
+        }
+
+        .method.post {
+            background: rgba(59, 130, 246, .2);
+            color: #93c5fd;
+        }
+
+        .method.put {
+            background: rgba(245, 158, 11, .2);
+            color: #fcd34d;
+        }
+
+        .method.delete {
+            background: rgba(239, 68, 68, .2);
+            color: #fca5a5;
+        }
+
+        /* ---- Architecture Box ---- */
+        .arch-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 2;
+        }
+
+        .arch-box .layer {
+            color: #a5b4fc;
+            font-weight: 600;
+        }
+
+        .arch-box .arrow {
+            color: #4b5563;
+            margin: 0 6px;
+        }
+
+        /* ---- Info block ---- */
+        .info {
+            background: rgba(99, 102, 241, .08);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 8px 8px 0;
+            padding: 14px 18px;
+            margin: 16px 0;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .info strong {
+            color: #a5b4fc;
+        }
+
+        /* ---- List ---- */
+        ul.styled {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul.styled li {
+            padding: 6px 0;
+            color: #94a3b8;
+            font-size: 13px;
+            padding-left: 18px;
+            position: relative;
+        }
+
+        ul.styled li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+
+        /* ---- Section number ---- */
+        .sec-num {
+            display: inline-flex;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            margin-right: 10px;
+        }
+
+        /* ---- Highlight box ---- */
+        .highlight {
+            background: linear-gradient(135deg, rgba(99, 102, 241, .1), rgba(139, 92, 246, .08));
+            border: 1px solid rgba(99, 102, 241, .2);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 16px 0;
+        }
+
+        /* ---- Score chip ---- */
+        .chip {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .chip.ai {
+            background: rgba(139, 92, 246, .2);
+            color: #c4b5fd;
+        }
+
+        .chip.auth {
+            background: rgba(59, 130, 246, .2);
+            color: #93c5fd;
+        }
+
+        .chip.db {
+            background: rgba(16, 185, 129, .2);
+            color: #6ee7b7;
+        }
+
+        .chip.rt {
+            background: rgba(245, 158, 11, .2);
+            color: #fcd34d;
+        }
+
+        .chip.admin {
+            background: rgba(239, 68, 68, .2);
+            color: #fca5a5;
+        }
+
+        .chip.storage {
+            background: rgba(100, 116, 139, .2);
+            color: #94a3b8;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px;
+            background: var(--card);
+            border-top: 1px solid var(--border);
+            color: #475569;
+            font-size: 12px;
+        }
+
+        .footer strong {
+            color: #6366f1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ========== COVER PAGE ========== -->
+    <div class="cover">
+        <div class="cover-content">
+            <div class="cover-badge">Project Documentation Report</div>
+            <h1>Mock<span>Mate</span></h1>
+            <p class="cover-sub">AI-Powered Interview Excellence Platform — Complete Technical & Feature Documentation
+            </p>
+
+            <div class="cover-meta">
+                <div class="cover-meta-item">
+                    <div class="label">Type</div>
+                    <div class="value">Full-Stack Web App</div>
+                </div>
+                <div class="cover-meta-item">
+                    <div class="label">AI Model</div>
+                    <div class="value">Gemini 2.5 Flash</div>
+                </div>
+                <div class="cover-meta-item">
+                    <div class="label">Architecture</div>
+                    <div class="value">MERN + Socket.io</div>
+                </div>
+                <div class="cover-meta-item">
+                    <div class="label">Deployment</div>
+                    <div class="value">Vercel + Render</div>
+                </div>
+            </div>
+
+            <div class="cover-url">🌐 https://mockmateapp.vercel.app</div>
+        </div>
+    </div>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <div class="container">
+
+        <!-- 1. OVERVIEW -->
+        <section>
+            <h2><span class="sec-num">1</span> Project Overview</h2>
+            <div class="highlight">
+                <p><strong>MockMate</strong> is a cutting-edge, AI-driven interview preparation platform that bridges
+                    the gap between preparation and performance. It leverages <strong>Google Gemini 2.5 Flash
+                        Lite</strong> to provide real-time, personalized interview practice, ATS-compliant resume
+                    analysis, an AI career companion (CoachMate), and a rich admin control centre — all built on a
+                    modern full-stack architecture.</p>
+            </div>
+            <p>The platform follows a <strong>five-phase user journey</strong>: Preparation → Practice → Analysis →
+                Management (Admin) → Coaching. Each phase is backed by dedicated backend APIs and real-time
+                communication via Socket.io.</p>
+
+            <div class="card-grid" style="margin-top:20px;">
+                <div class="feature-card">
+                    <h4>🎯 Primary Purpose</h4>
+                    <p>Help job-seekers practise interviews with AI feedback, optimise their resumes for ATS systems,
+                        and build confidence before real interviews.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🤖 AI at the Core</h4>
+                    <p>Every feature — question generation, answer analysis, concept explanations, resume analysis, and
+                        CoachMate chat — is powered by Google Gemini.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔴 Real-Time Features</h4>
+                    <p>Socket.io enables a live interview mode with WebRTC-based peer-to-peer video and bidirectional
+                        messaging between candidate and interviewer.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. TECH STACK -->
+        <section class="page-break">
+            <h2><span class="sec-num">2</span> Technology Stack</h2>
+
+            <h3>🖥️ Frontend</h3>
+            <div class="tech-grid">
+                <span class="badge purple">React 18</span>
+                <span class="badge purple">Vite 6</span>
+                <span class="badge blue">Tailwind CSS 4</span>
+                <span class="badge purple">Framer Motion 12</span>
+                <span class="badge blue">React Router v7</span>
+                <span class="badge green">Socket.io Client</span>
+                <span class="badge orange">SimplePeer (WebRTC)</span>
+                <span class="badge green">Firebase 12 (Google Auth)</span>
+                <span class="badge blue">Axios</span>
+                <span class="badge gray">Recharts</span>
+                <span class="badge gray">jsPDF + html2canvas</span>
+                <span class="badge gray">react-markdown</span>
+                <span class="badge gray">pdfjs-dist</span>
+                <span class="badge gray">mammoth (DOCX reader)</span>
+                <span class="badge orange">Vercel Analytics</span>
+            </div>
+
+            <h3>⚙️ Backend</h3>
+            <div class="tech-grid">
+                <span class="badge green">Node.js</span>
+                <span class="badge green">Express 5</span>
+                <span class="badge blue">Socket.io 4</span>
+                <span class="badge purple">@google/generative-ai</span>
+                <span class="badge green">Mongoose 8</span>
+                <span class="badge orange">bcryptjs</span>
+                <span class="badge orange">jsonwebtoken</span>
+                <span class="badge gray">multer</span>
+                <span class="badge gray">CORS</span>
+                <span class="badge gray">dotenv</span>
+                <span class="badge gray">nodemon</span>
+            </div>
+
+            <h3>☁️ Infrastructure &amp; Services</h3>
+            <div class="tech-grid">
+                <span class="badge green">MongoDB Atlas (Database)</span>
+                <span class="badge blue">Cloudinary (Asset Storage)</span>
+                <span class="badge purple">Google Gemini 2.5 Flash Lite (AI)</span>
+                <span class="badge orange">Firebase (Google OAuth)</span>
+                <span class="badge gray">Vercel (Frontend Hosting)</span>
+                <span class="badge gray">Render (Backend Hosting)</span>
+            </div>
+
+            <h3>How Technologies Work Together</h3>
+            <div class="arch-box">
+                <span class="layer">React (Vite)</span> <span class="arrow">──HTTP──▶</span> <span class="layer">Express
+                    REST API</span> <span class="arrow">──▶</span> <span class="layer">MongoDB Atlas</span><br />
+                <span class="layer">React (Vite)</span> <span class="arrow">──Socket.io──▶</span> <span
+                    class="layer">Socket.io Server</span> <span class="arrow">──▶</span> <span class="layer">Other
+                    Clients</span><br />
+                <span class="layer">Express API</span> <span class="arrow">──▶</span> <span class="layer">Gemini 2.5
+                    Flash Lite</span> <span class="arrow">──▶</span> <span class="layer">AI Response</span><br />
+                <span class="layer">React (Firebase)</span> <span class="arrow">──Google OAuth──▶</span> <span
+                    class="layer">Firebase</span> <span class="arrow">──▶</span> <span class="layer">Backend
+                    /api/auth/google</span><br />
+                <span class="layer">Express API</span> <span class="arrow">──▶</span> <span
+                    class="layer">Cloudinary</span> <span class="arrow">──▶</span> <span class="layer">PDF / Image
+                    Storage</span>
+            </div>
+        </section>
+
+        <!-- 3. FEATURES -->
+        <section class="page-break">
+            <h2><span class="sec-num">3</span> Core Features</h2>
+
+            <h3><span class="chip ai">AI</span> Feature 1 — AI Question Generation</h3>
+            <div class="card">
+                <p><strong>What it does:</strong> Users specify a job role, years of experience, and topics to focus on.
+                    Gemini AI generates a set of tailored interview Q&amp;A pairs (both question and a model answer) in
+                    structured JSON format.</p>
+                <p><strong>How it works:</strong> The frontend sends the role/experience/topics to
+                    <code>POST /api/ai/generate-questions</code>. The backend builds a prompt using
+                    <code>questionAnswerPrompt()</code>, calls Gemini 2.5 Flash Lite, parses and validates the JSON
+                    response (with a custom character-level JSON parser to handle malformed output), and returns it to
+                    the frontend. Also supports resume-based question generation when a resume is pasted in.</p>
+                <p><strong>Retry Logic:</strong> Implements exponential backoff retry (up to 3 tries, starting at 1s
+                    delay doubling each time) for HTTP 429 rate-limit errors.</p>
+            </div>
+
+            <h3><span class="chip ai">AI</span> Feature 2 — Live Answer Analysis (Transcript Analysis)</h3>
+            <div class="card">
+                <p><strong>What it does:</strong> After a user speaks their answer (recorded via Web Speech API), the
+                    transcript is submitted for AI evaluation. Gemini scores the answer (1–10), identifies strengths and
+                    areas for improvement, and returns a refined model answer and key takeaways.</p>
+                <p><strong>How it works:</strong> Transcript is sent to <code>POST /api/ai/analyze-transcript</code>. A
+                    structured prompt is built with <code>transcriptAnalysisPrompt(question, transcript)</code>, the
+                    response is parsed to JSON. The frontend renders the score, feedback, and model answer with
+                    animations via Framer Motion.</p>
+            </div>
+
+            <h3><span class="chip ai">AI</span> Feature 3 — Concept Explanation</h3>
+            <div class="card">
+                <p><strong>What it does:</strong> Users can click on any interview question and request a deep
+                    AI-generated explanation of the concept — useful for learning unfamiliar topics mid-session.</p>
+                <p><strong>How it works:</strong> Calls <code>POST /api/ai/generate-explanation</code> with the question
+                    text. Uses <code>conceptExplainPrompt()</code> to build the prompt and returns a structured
+                    explanation object.</p>
+            </div>
+
+            <h3><span class="chip ai">AI</span> Feature 4 — ATS Resume Checker</h3>
+            <div class="card">
+                <p><strong>What it does:</strong> Users upload their resume (PDF or DOCX) and enter a target job role.
+                    Gemini analyses the resume against ATS criteria and returns a score, keyword matches, missing
+                    keywords, and improvement suggestions.</p>
+                <p><strong>How it works:</strong> The frontend uses <strong>pdfjs-dist</strong> (for PDF) and
+                    <strong>mammoth</strong> (for DOCX) to extract resume text on the client side. The extracted text is
+                    sent to the backend AI endpoint. The result is displayed as a rich dashboard with charts (Recharts).
+                </p>
+            </div>
+
+            <h3><span class="chip ai">AI</span> Feature 5 — CoachMate (AI Career Companion)</h3>
+            <div class="card">
+                <p><strong>What it does:</strong> A conversational AI assistant that acts as a friendly "placement
+                    bestie". It answers career questions, provides interview tips, links to the user's resume, and
+                    guides users to the right MockMate tools — all in a chat interface.</p>
+                <p><strong>How it works:</strong> Uses a detailed system prompt that defines CoachMate's personality,
+                    routing map, and response style. The last 10 messages of conversation history are included in each
+                    prompt for context. Chat history is persisted in MongoDB via the <code>CoachMateChat</code> model.
+                    Supports history retrieval and resets.</p>
+            </div>
+
+            <h3><span class="chip rt">Real-Time</span> Feature 6 — Live Interview Mode (WebRTC + Socket.io)</h3>
+            <div class="card">
+                <p><strong>What it does:</strong> A full peer-to-peer video interview simulation. One user acts as the
+                    interviewer, another as the candidate. Both join a shared room, see each other via live video, and
+                    can chat simultaneously.</p>
+                <p><strong>How it works:</strong> Socket.io handles signalling: <code>join-room</code> notifies peers,
+                    <code>signal</code> relays WebRTC offers/answers/ICE candidates between peers. SimplePeer (a WebRTC
+                    library) handles the direct video stream. The backend does not process video — it only acts as the
+                    signalling server.</p>
+            </div>
+
+            <h3><span class="chip db">Sessions</span> Feature 7 — Session-Based Interview Prep</h3>
+            <div class="card">
+                <p><strong>What it does:</strong> Users create a named "prep session" tied to a specific role and set of
+                    topics. Within a session, Gemini generates questions that are saved to the database. Users can pin
+                    important questions, add personal notes, and revisit sessions from their Dashboard.</p>
+                <p><strong>How it works:</strong> The <code>Session</code> model stores the user reference, role,
+                    experience, topics, and linked question IDs. The <code>Question</code> model stores each Q&amp;A
+                    pair with note and isPinned flag. The Dashboard displays all sessions with timestamps.</p>
+            </div>
+
+            <h3><span class="chip auth">Auth</span> Feature 8 — Authentication (Email/Password + Google OAuth)</h3>
+            <div class="card">
+                <p><strong>What it does:</strong> Users can sign up and log in with email/password OR sign in instantly
+                    with Google. All protected routes require a valid JWT token in the Authorization header.</p>
+                <p><strong>How it works:</strong> For email auth, passwords are hashed with <strong>bcryptjs</strong>
+                    (salt rounds: 10) and JWTs are signed with <code>JWT_SECRET</code> (7-day expiry). For Google auth,
+                    Firebase handles the OAuth flow on the frontend; the resulting user profile (name, email, photo) is
+                    sent to <code>POST /api/auth/google</code>, which upserts the user in MongoDB and returns a JWT. The
+                    <code>protect</code> middleware verifies JWTs on all private endpoints.</p>
+            </div>
+
+            <h3><span class="chip admin">Admin</span> Feature 9 — Admin Control Panel</h3>
+            <div class="card">
+                <p><strong>What it does:</strong> Admins have a dedicated control panel to view all registered users,
+                    delete users (cascades to their sessions and questions), manage toast notifications shown app-wide,
+                    and send broadcast messages/emails to all users or selected users.</p>
+                <p><strong>How it works:</strong> Admin routes under <code>/api/admin</code>. The <code>Broadcast</code>
+                    model records all sent messages. The <code>Toast</code> model allows admins to create sequenced,
+                    delayed toast notifications that appear globally for all users. The <code>Notification</code> model
+                    tracks per-user read/unread status.</p>
+            </div>
+
+            <h3><span class="chip storage">PDF</span> Feature 10 — Interview Report PDF Generation</h3>
+            <div class="card">
+                <p><strong>What it does:</strong> After an analysis, users can generate and download a PDF report
+                    containing the question, their transcript, AI score with grade (A+–D), strengths, improvements,
+                    refined answer, and performance metrics.</p>
+                <p><strong>How it works:</strong> The backend endpoint <code>POST /api/ai/generate-pdf-data</code>
+                    structures the raw analysis into a rich data object with metadata, interview details, and
+                    performance metrics. The frontend then uses <strong>jsPDF + html2canvas</strong> to render and
+                    download the PDF in-browser.</p>
+            </div>
+
+            <h3><span class="chip db">Resume</span> Feature 11 — Bento Resume Workspace</h3>
+            <div class="card">
+                <p><strong>What it does:</strong> A bento-grid style workspace where users can store their resume link,
+                    view it inline, get AI-powered improvement tips, and quickly navigate to ATS analysis. Resume links
+                    are persisted to the user profile.</p>
+                <p><strong>How it works:</strong> The <code>PUT /api/auth/resume-link</code> endpoint updates the
+                    <code>resumeLink</code> field on the User document. CoachMate also reads this link to answer
+                    questions about the user's resume.</p>
+            </div>
+
+            <h3><span class="chip auth">Practice</span> Feature 12 — HR Interview Practice (Voice + AI)</h3>
+            <div class="card">
+                <p><strong>What it does:</strong> A dedicated mode for behavioural / HR round practice. Users answer
+                    questions by speaking; the browser's Web Speech API captures and transcribes their answer in real
+                    time; Gemini then analyses the transcript.</p>
+                <p><strong>How it works:</strong> Frontend uses the <code>window.SpeechRecognition</code> Web API. After
+                    recording, the transcript is cleaned via <code>POST /api/ai/cleanup-transcript</code> (removes
+                    filler words and fixes grammar) before being sent for full analysis at
+                    <code>POST /api/ai/analyze-transcript</code>.</p>
+            </div>
+        </section>
+
+        <!-- 4. API ROUTES -->
+        <section class="page-break">
+            <h2><span class="sec-num">4</span> Backend API Reference</h2>
+
+            <h3>🔐 Auth Routes — <code>/api/auth</code></h3>
+            <table>
+                <tr>
+                    <th>Method</th>
+                    <th>Endpoint</th>
+                    <th>Access</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><span class="method post">POST</span></td>
+                    <td><code>/register</code></td>
+                    <td>Public</td>
+                    <td>Register with email &amp; password</td>
+                </tr>
+                <tr>
+                    <td><span class="method post">POST</span></td>
+                    <td><code>/login</code></td>
+                    <td>Public</td>
+                    <td>Login with email &amp; password, returns JWT</td>
+                </tr>
+                <tr>
+                    <td><span class="method post">POST</span></td>
+                    <td><code>/google</code></td>
+                    <td>Public</td>
+                    <td>Google OAuth upsert — creates or logs in user</td>
+                </tr>
+                <tr>
+                    <td><span class="method get">GET</span></td>
+                    <td><code>/profile</code></td>
+                    <td>Private</td>
+                    <td>Get current user profile</td>
+                </tr>
+                <tr>
+                    <td><span class="method get">GET</span></td>
+                    <td><code>/users</code></td>
+                    <td>Admin</td>
+                    <td>Get all registered users</td>
+                </tr>
+                <tr>
+                    <td><span class="method delete">DEL</span></td>
+                    <td><code>/users/:id</code></td>
+                    <td>Admin</td>
+                    <td>Delete user + all their sessions &amp; questions</td>
+                </tr>
+                <tr>
+                    <td><span class="method put">PUT</span></td>
+                    <td><code>/resume-link</code></td>
+                    <td>Private</td>
+                    <td>Update user's stored resume URL</td>
+                </tr>
+            </table>
+
+            <h3>📋 Session Routes — <code>/api/sessions</code></h3>
+            <table>
+                <tr>
+                    <th>Method</th>
+                    <th>Endpoint</th>
+                    <th>Access</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><span class="method post">POST</span></td>
+                    <td><code>/</code></td>
+                    <td>Private</td>
+                    <td>Create a new interview prep session</td>
+                </tr>
+                <tr>
+                    <td><span class="method get">GET</span></td>
+                    <td><code>/</code></td>
+                    <td>Private</td>
+                    <td>Get all sessions for the current user</td>
+                </tr>
+                <tr>
+                    <td><span class="method get">GET</span></td>
+                    <td><code>/:id</code></td>
+                    <td>Private</td>
+                    <td>Get a single session by ID</td>
+                </tr>
+                <tr>
+                    <td><span class="method delete">DEL</span></td>
+                    <td><code>/:id</code></td>
+                    <td>Private</td>
+                    <td>Delete a session and its questions</td>
+                </tr>
+            </table>
+
+            <h3>❓ Question Routes — <code>/api/questions</code></h3>
+            <table>
+                <tr>
+                    <th>Method</th>
+                    <th>Endpoint</th>
+                    <th>Access</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><span class="method post">POST</span></td>
+                    <td><code>/</code></td>
+                    <td>Private</td>
+                    <td>Save generated questions to a session</td>
+                </tr>
+                <tr>
+                    <td><span class="method get">GET</span></td>
+                    <td><code>/:session</code></td>
+                    <td>Private</td>
+                    <td>Get all questions for a session</td>
+                </tr>
+                <tr>
+                    <td><span class="method put">PUT</span></td>
+                    <td><code>/:id/pin</code></td>
+                    <td>Private</td>
+                    <td>Toggle pin on a question</td>
+                </tr>
+                <tr>
+                    <td><span class="method put">PUT</span></td>
+                    <td><code>/:id/note</code></td>
+                    <td>Private</td>
+                    <td>Update personal note on a question</td>
+                </tr>
+            </table>
+
+            <h3>🤖 AI Routes — <code>/api/ai</code></h3>
+            <table>
+                <tr>
+                    <th>Method</th>
+                    <th>Endpoint</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><span class="method post">POST</span></td>
+                    <td><code>/generate-questions</code></td>
+                    <td>Generate interview Q&amp;A pairs using Gemini</td>
+                </tr>
+                <tr>
+                    <td><span class="method post">POST</span></td>
+                    <td><code>/generate-explanation</code></td>
+                    <td>Deep explanation of an interview concept</td>
+                </tr>
+                <tr>
+                    <td><span class="method post">POST</span></td>
+                    <td><code>/analyze-transcript</code></td>
+                    <td>Score &amp; analyse spoken answer transcript</td>
+                </tr>
+                <tr>
+                    <td><span class="method post">POST</span></td>
+                    <td><code>/cleanup-transcript</code></td>
+                    <td>Remove filler words, fix grammar in transcript</td>
+                </tr>
+                <tr>
+                    <td><span class="method post">POST</span></td>
+                    <td><code>/generate-pdf-data</code></td>
+                    <td>Structure analysis data for PDF report generation</td>
+                </tr>
+            </table>
+
+            <h3>💬 CoachMate Routes — <code>/api/coach</code></h3>
+            <table>
+                <tr>
+                    <th>Method</th>
+                    <th>Endpoint</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><span class="method get">GET</span></td>
+                    <td><code>/history</code></td>
+                    <td>Fetch the user's chat history with CoachMate</td>
+                </tr>
+                <tr>
+                    <td><span class="method post">POST</span></td>
+                    <td><code>/chat</code></td>
+                    <td>Send a message and get a CoachMate reply</td>
+                </tr>
+                <tr>
+                    <td><span class="method delete">DEL</span></td>
+                    <td><code>/reset</code></td>
+                    <td>Clear all chat history for the current user</td>
+                </tr>
+            </table>
+
+            <h3>🔔 Notification &amp; Admin Routes</h3>
+            <table>
+                <tr>
+                    <th>Method</th>
+                    <th>Endpoint</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><span class="method get">GET</span></td>
+                    <td><code>/api/notifications</code></td>
+                    <td>Get notifications for logged-in user</td>
+                </tr>
+                <tr>
+                    <td><span class="method put">PUT</span></td>
+                    <td><code>/api/notifications/:id/read</code></td>
+                    <td>Mark notification as read</td>
+                </tr>
+                <tr>
+                    <td><span class="method post">POST</span></td>
+                    <td><code>/api/admin/broadcast</code></td>
+                    <td>Send a broadcast message to all/selected users</td>
+                </tr>
+                <tr>
+                    <td><span class="method get">GET</span></td>
+                    <td><code>/api/admin/toasts</code></td>
+                    <td>Get all admin-configured toast messages</td>
+                </tr>
+                <tr>
+                    <td><span class="method post">POST</span></td>
+                    <td><code>/api/admin/toasts</code></td>
+                    <td>Create a new global toast message</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 5. DATABASE MODELS -->
+        <section class="page-break">
+            <h2><span class="sec-num">5</span> Database Models (MongoDB)</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <h3 style="margin-top:0">👤 User</h3>
+                    <table>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                        </tr>
+                        <tr>
+                            <td><strong>name</strong></td>
+                            <td>String (required)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>email</strong></td>
+                            <td>String (unique, indexed)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>password</strong></td>
+                            <td>String (hashed, optional for OAuth)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>profileImageUrl</strong></td>
+                            <td>String (Google photo or initials)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>resumeLink</strong></td>
+                            <td>String (URL)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>initials</strong></td>
+                            <td>String</td>
+                        </tr>
+                        <tr>
+                            <td><strong>isBanned</strong></td>
+                            <td>Boolean</td>
+                        </tr>
+                        <tr>
+                            <td><strong>createdAt / updatedAt</strong></td>
+                            <td>Date (auto)</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3 style="margin-top:0">📌 Session</h3>
+                    <table>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                        </tr>
+                        <tr>
+                            <td><strong>user</strong></td>
+                            <td>ObjectId → User</td>
+                        </tr>
+                        <tr>
+                            <td><strong>role</strong></td>
+                            <td>String (e.g. "SDE", "PM")</td>
+                        </tr>
+                        <tr>
+                            <td><strong>experience</strong></td>
+                            <td>String</td>
+                        </tr>
+                        <tr>
+                            <td><strong>topicsToFocus</strong></td>
+                            <td>String</td>
+                        </tr>
+                        <tr>
+                            <td><strong>description</strong></td>
+                            <td>String</td>
+                        </tr>
+                        <tr>
+                            <td><strong>questions</strong></td>
+                            <td>[ObjectId] → Question</td>
+                        </tr>
+                        <tr>
+                            <td><strong>isResumeSession</strong></td>
+                            <td>Boolean</td>
+                        </tr>
+                        <tr>
+                            <td><strong>endTime</strong></td>
+                            <td>Date</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3 style="margin-top:0">❓ Question</h3>
+                    <table>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                        </tr>
+                        <tr>
+                            <td><strong>session</strong></td>
+                            <td>ObjectId → Session</td>
+                        </tr>
+                        <tr>
+                            <td><strong>question</strong></td>
+                            <td>String</td>
+                        </tr>
+                        <tr>
+                            <td><strong>answer</strong></td>
+                            <td>String (model answer)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>note</strong></td>
+                            <td>String (user's note)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>isPinned</strong></td>
+                            <td>Boolean</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3 style="margin-top:0">💬 CoachMateChat</h3>
+                    <table>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                        </tr>
+                        <tr>
+                            <td><strong>userId</strong></td>
+                            <td>ObjectId → User</td>
+                        </tr>
+                        <tr>
+                            <td><strong>messages</strong></td>
+                            <td>Array [{role, content}]</td>
+                        </tr>
+                        <tr>
+                            <td><strong>createdAt</strong></td>
+                            <td>Date</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3 style="margin-top:0">🔔 Notification</h3>
+                    <table>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                        </tr>
+                        <tr>
+                            <td><strong>userId</strong></td>
+                            <td>ObjectId → User (indexed)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>title</strong></td>
+                            <td>String</td>
+                        </tr>
+                        <tr>
+                            <td><strong>message</strong></td>
+                            <td>String</td>
+                        </tr>
+                        <tr>
+                            <td><strong>isRead</strong></td>
+                            <td>Boolean</td>
+                        </tr>
+                        <tr>
+                            <td><strong>type</strong></td>
+                            <td>info / warning / success</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3 style="margin-top:0">📢 Broadcast</h3>
+                    <table>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                        </tr>
+                        <tr>
+                            <td><strong>subject</strong></td>
+                            <td>String</td>
+                        </tr>
+                        <tr>
+                            <td><strong>message</strong></td>
+                            <td>String</td>
+                        </tr>
+                        <tr>
+                            <td><strong>targetAudience</strong></td>
+                            <td>ALL / SELECTED</td>
+                        </tr>
+                        <tr>
+                            <td><strong>recipientCount</strong></td>
+                            <td>Number</td>
+                        </tr>
+                        <tr>
+                            <td><strong>sentBy</strong></td>
+                            <td>ObjectId → User</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <h3 style="margin-top:0">🍞 Toast</h3>
+                    <table>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                        </tr>
+                        <tr>
+                            <td><strong>message</strong></td>
+                            <td>String</td>
+                        </tr>
+                        <tr>
+                            <td><strong>order</strong></td>
+                            <td>Number (display order)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>delay</strong></td>
+                            <td>Number (ms delay)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>isActive</strong></td>
+                            <td>Boolean</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. FRONTEND ARCHITECTURE -->
+        <section class="page-break">
+            <h2><span class="sec-num">6</span> Frontend Architecture</h2>
+
+            <h3>Application Routing (React Router v7)</h3>
+            <table>
+                <tr>
+                    <th>Route</th>
+                    <th>Component</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>/</code></td>
+                    <td>LandingPage</td>
+                    <td>Hero, features, CTA — public landing page</td>
+                </tr>
+                <tr>
+                    <td><code>/dashboard</code></td>
+                    <td>Dashboard</td>
+                    <td>User's session history and quick actions</td>
+                </tr>
+                <tr>
+                    <td><code>/interview-prep/:sessionId</code></td>
+                    <td>InterviewPrep</td>
+                    <td>Session prep — view &amp; edit generated Q&amp;As</td>
+                </tr>
+                <tr>
+                    <td><code>/interview/hr/record</code></td>
+                    <td>Record</td>
+                    <td>HR/voice interview practice mode</td>
+                </tr>
+                <tr>
+                    <td><code>/interview/session-interview</code></td>
+                    <td>SessionInterview</td>
+                    <td>Session-based interview drill</td>
+                </tr>
+                <tr>
+                    <td><code>/interview/live</code></td>
+                    <td>LiveInterview</td>
+                    <td>WebRTC peer-to-peer live interview</td>
+                </tr>
+                <tr>
+                    <td><code>/resume-view</code></td>
+                    <td>ResumeViewPage</td>
+                    <td>Bento resume workspace</td>
+                </tr>
+                <tr>
+                    <td><code>/resume/ats-check</code></td>
+                    <td>ATSCheckerPage</td>
+                    <td>ATS resume analysis tool</td>
+                </tr>
+                <tr>
+                    <td><code>/admin</code></td>
+                    <td>Admin</td>
+                    <td>Admin control panel</td>
+                </tr>
+                <tr>
+                    <td><code>/docs</code></td>
+                    <td>Docs</td>
+                    <td>In-app documentation</td>
+                </tr>
+            </table>
+
+            <h3>State Management</h3>
+            <div class="info">
+                <strong>UserContext</strong> (React Context API) is the global state manager. It stores the
+                authenticated user object (from localStorage) and exposes it app-wide. No Redux is used — Context +
+                custom hooks handle all state needs cleanly.
+            </div>
+
+            <h3>Key Frontend Folder Structure</h3>
+            <table>
+                <tr>
+                    <th>Folder</th>
+                    <th>Contents</th>
+                </tr>
+                <tr>
+                    <td><code>src/pages/Home</code></td>
+                    <td>LandingPage, Dashboard</td>
+                </tr>
+                <tr>
+                    <td><code>src/pages/Auth</code></td>
+                    <td>Login, Signup, Google Auth components</td>
+                </tr>
+                <tr>
+                    <td><code>src/pages/Preparation</code></td>
+                    <td>InterviewPrep, session creation flow, Loader</td>
+                </tr>
+                <tr>
+                    <td><code>src/pages/Interview/HRInterview</code></td>
+                    <td>Voice recording + analysis UI</td>
+                </tr>
+                <tr>
+                    <td><code>src/pages/Interview/LiveInterview</code></td>
+                    <td>WebRTC video + chat UI</td>
+                </tr>
+                <tr>
+                    <td><code>src/pages/Interview/SessionInterview</code></td>
+                    <td>Session-based Q&amp;A drill UI</td>
+                </tr>
+                <tr>
+                    <td><code>src/pages/Interview/Components</code></td>
+                    <td>Shared: QuestionCard, ScoreCard, Feedback</td>
+                </tr>
+                <tr>
+                    <td><code>src/pages/Resume</code></td>
+                    <td>ResumeViewPage, ATSCheckerPage</td>
+                </tr>
+                <tr>
+                    <td><code>src/pages/Admin</code></td>
+                    <td>Admin panel, User management, Toasts, Broadcasts</td>
+                </tr>
+                <tr>
+                    <td><code>src/pages/Docs</code></td>
+                    <td>In-app documentation viewer</td>
+                </tr>
+                <tr>
+                    <td><code>src/context</code></td>
+                    <td>userContext.jsx — global auth state</td>
+                </tr>
+                <tr>
+                    <td><code>src/config</code></td>
+                    <td>Firebase config, Axios base config</td>
+                </tr>
+                <tr>
+                    <td><code>src/utils</code></td>
+                    <td>Helper functions for API calls, PDF utils</td>
+                </tr>
+                <tr>
+                    <td><code>src/hooks</code></td>
+                    <td>Custom hooks (useVoice, useSocket, etc.)</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 7. REAL-TIME & SOCKET.IO -->
+        <section class="page-break">
+            <h2><span class="sec-num">7</span> Real-Time Communication (Socket.io)</h2>
+            <div class="info">
+                The backend creates a single Socket.io server instance attached to the same HTTP server as Express. All
+                real-time events flow through this single connection point.
+            </div>
+            <table>
+                <tr>
+                    <th>Event (Client → Server)</th>
+                    <th>Direction</th>
+                    <th>Purpose</th>
+                </tr>
+                <tr>
+                    <td><code>join_room</code></td>
+                    <td>Client → Server</td>
+                    <td>Join a named chat room</td>
+                </tr>
+                <tr>
+                    <td><code>send_message</code></td>
+                    <td>Client → Server</td>
+                    <td>Send a chat message to a room</td>
+                </tr>
+                <tr>
+                    <td><code>receive_message</code></td>
+                    <td>Server → Client</td>
+                    <td>Relay message to other room members</td>
+                </tr>
+                <tr>
+                    <td><code>join-room</code></td>
+                    <td>Client → Server</td>
+                    <td>Join a WebRTC video room</td>
+                </tr>
+                <tr>
+                    <td><code>user-joined</code></td>
+                    <td>Server → Client</td>
+                    <td>Notify peers a new user joined</td>
+                </tr>
+                <tr>
+                    <td><code>signal</code></td>
+                    <td>Bidirectional</td>
+                    <td>Relay WebRTC offer / answer / ICE candidates</td>
+                </tr>
+                <tr>
+                    <td><code>other-user</code></td>
+                    <td>Server → Client</td>
+                    <td>Send WebRTC offer with peer ID to initiator</td>
+                </tr>
+                <tr>
+                    <td><code>disconnect</code></td>
+                    <td>Server event</td>
+                    <td>Log user disconnection</td>
+                </tr>
+            </table>
+
+            <h3>WebRTC Video Flow</h3>
+            <ul class="styled">
+                <li>User A visits <code>/interview/live</code> and emits <code>join-room</code> with a room ID.</li>
+                <li>User B joins the same room — server emits <code>user-joined</code> to User A.</li>
+                <li>User A creates a WebRTC offer via SimplePeer and emits <code>signal</code> (type: offer).</li>
+                <li>Server relays the offer to User B as <code>other-user</code>.</li>
+                <li>User B sends back an answer via <code>signal</code>; ICE candidates flow both directions.</li>
+                <li>Peer-to-peer video stream established — no video data passes through the server.</li>
+            </ul>
+        </section>
+
+        <!-- 8. SECURITY -->
+        <section>
+            <h2><span class="sec-num">8</span> Security Architecture</h2>
+            <div class="card-grid">
+                <div class="feature-card">
+                    <h4>🔑 JWT Authentication</h4>
+                    <p>All private endpoints validate a Bearer token in the Authorization header. Tokens are signed with
+                        <code>JWT_SECRET</code> and expire in 7 days.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔒 Password Hashing</h4>
+                    <p>bcryptjs with salt rounds of 10 is used to hash passwords at registration. Passwords are never
+                        returned in API responses.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🌐 CORS Policy</h4>
+                    <p>Server explicitly allows only known origins (localhost ports, Vercel, Netlify, Render domains)
+                        for both REST and Socket.io connections.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🛡️ OAuth via Firebase</h4>
+                    <p>Google login uses Firebase OAuth on the frontend. Only the verified profile info is sent to the
+                        backend — no Google tokens are exposed to the backend server.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🚫 Cascade Delete</h4>
+                    <p>When an admin deletes a user, all associated Sessions and Questions are deleted first, preventing
+                        orphaned database records.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📋 Error Logging</h4>
+                    <p>AI API errors and rate-limit events are appended to <code>error_log.txt</code> server-side with
+                        ISO timestamps for debugging.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. DEPLOYMENT -->
+        <section class="page-break">
+            <h2><span class="sec-num">9</span> Deployment &amp; Environment</h2>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h3 style="margin-top:0">Frontend — Vercel</h3>
+                    <ul class="styled">
+                        <li>Hosted at <strong>mockmateapp.vercel.app</strong></li>
+                        <li>Built with <code>vite build</code></li>
+                        <li>Vercel Analytics &amp; Speed Insights integrated</li>
+                        <li>SPA routing handled via <code>vercel.json</code> rewrites</li>
+                        <li>Env vars: Firebase config, backend API URL</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 style="margin-top:0">Backend — Render</h3>
+                    <ul class="styled">
+                        <li>Node.js server started with <code>node server.js</code></li>
+                        <li>Listens on <code>0.0.0.0:PORT</code> (Render-assigned)</li>
+                        <li>Env vars: MONGO_URI, JWT_SECRET, GEMINI_API_KEY, CLOUDINARY credentials</li>
+                        <li>Health check endpoint at <code>GET /health</code></li>
+                        <li>AI test endpoint at <code>GET /test-ai</code></li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Required Environment Variables</h3>
+            <table>
+                <tr>
+                    <th>Variable</th>
+                    <th>Location</th>
+                    <th>Purpose</th>
+                </tr>
+                <tr>
+                    <td><code>MONGO_URI</code></td>
+                    <td>Backend</td>
+                    <td>MongoDB Atlas connection string</td>
+                </tr>
+                <tr>
+                    <td><code>JWT_SECRET</code></td>
+                    <td>Backend</td>
+                    <td>Secret key for signing JWTs</td>
+                </tr>
+                <tr>
+                    <td><code>GEMINI_API_KEY</code></td>
+                    <td>Backend</td>
+                    <td>Google Gemini API access key</td>
+                </tr>
+                <tr>
+                    <td><code>CLOUDINARY_*</code></td>
+                    <td>Backend</td>
+                    <td>Cloud name, API key, API secret</td>
+                </tr>
+                <tr>
+                    <td><code>PORT</code></td>
+                    <td>Backend</td>
+                    <td>Server port (default 5000)</td>
+                </tr>
+                <tr>
+                    <td><code>VITE_FIREBASE_*</code></td>
+                    <td>Frontend</td>
+                    <td>Firebase project configuration</td>
+                </tr>
+                <tr>
+                    <td><code>VITE_API_URL</code></td>
+                    <td>Frontend</td>
+                    <td>Backend API base URL</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- 10. USER FLOW -->
+        <section>
+            <h2><span class="sec-num">10</span> Complete User Flow</h2>
+            <div class="arch-box" style="line-height:2.2;">
+                <span class="layer">Landing Page</span> → Sign Up / Google Login<br />
+                ↓<br />
+                <span class="layer">Dashboard</span> → View past sessions, quick actions, CoachMate chat<br />
+                ↓<br />
+                <span class="layer">Create Session</span> → Enter Role + Experience + Topics → Gemini generates
+                Q&amp;As<br />
+                ↓<br />
+                <span class="layer">InterviewPrep Page</span> → Read questions, pin important ones, add notes, get AI
+                explanations<br />
+                ↓<br />
+                <span class="layer">Choose Practice Mode</span><br />
+                &nbsp;&nbsp;├── <span class="layer">HR Interview</span> → Record voice answer → AI cleanup → AI analysis
+                → Score<br />
+                &nbsp;&nbsp;├── <span class="layer">Session Interview</span> → Type/speak answer → AI analysis →
+                Download PDF report<br />
+                &nbsp;&nbsp;└── <span class="layer">Live Interview</span> → WebRTC video call → Real-time Q&amp;A with
+                interviewer<br />
+                ↓<br />
+                <span class="layer">Resume Workspace</span> → Save resume link → View PDF/DOCX inline → ATS Score
+                check<br />
+                ↓<br />
+                <span class="layer">CoachMate</span> → Chat with AI career companion → Get tips, links, motivation<br />
+                ↓<br />
+                <span class="layer">Admin (if admin)</span> → Manage users → Send broadcasts → Configure system toasts
+            </div>
+        </section>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p>This document was auto-generated from a deep code analysis of the <strong>MockMate</strong> repository.</p>
+        <p style="margin-top:6px;">Built by <strong>Faiq Wajahat</strong> &nbsp;|&nbsp;
+            <strong>mockmateapp.vercel.app</strong> &nbsp;|&nbsp; Generated: March 2026</p>
+        <p style="margin-top:10px;font-size:11px;color:#334155;">To save as PDF: Open this file in your browser → Press
+            <strong>Ctrl+P</strong> (or Cmd+P on Mac) → Choose "Save as PDF" → Click Save</p>
+    </div>
+
+</body>
+
+</html>
